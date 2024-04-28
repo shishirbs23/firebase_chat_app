@@ -12,7 +12,12 @@
           "package_name": "com.example.firebase_chat_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "991123841849-lb554rq7u1hbb9oq91bvhanh5nkrc7ge.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAYUTk_8tkXGWrKwZFCp2r4giU8xKAf3TU"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "991123841849-lb554rq7u1hbb9oq91bvhanh5nkrc7ge.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "991123841849-ufi1a16184lm3jm1a6efrmoedak3200n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.firebaseChatApp"
+              }
+            }
+          ]
         }
       }
     }
