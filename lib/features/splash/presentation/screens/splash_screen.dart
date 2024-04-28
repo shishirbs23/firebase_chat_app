@@ -1,26 +1,26 @@
-import 'package:firebase_chat_app/core/config/routing/app_router_generator.dart';
-import 'package:firebase_chat_app/core/config/storage/app_storage.dart';
 import 'package:firebase_chat_app/utils/app_strings.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:go_router/go_router.dart';
+import 'package:firebase_chat_app/core/config/routing/app_router_generator.dart';
 
-final storageProvider = Provider<AppStorage>((ref) => AppStorage());
-final authTokenProvider = FutureProvider<String>(
-  (ref) => ref.read(storageProvider).getAuthToken(),
-);
+final authStateProvider = StreamProvider<User?>((ref) {
+  return FirebaseAuth.instance.authStateChanges();
+});
 
 class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tokenData = ref.watch(authTokenProvider);
+    final authData = ref.watch(authStateProvider);
 
     return Scaffold(
       body: Center(
-        child: tokenData.when(
-          data: (token) => _handleToken(token, context),
+        child: authData.when(
+          data: (user) => _handleToken(user, context),
           loading: () {
             return const Text(AppStrings.checkingUserInfo);
           },
@@ -28,22 +28,23 @@ class SplashScreen extends ConsumerWidget {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               context.goNamed(RouteNames.login);
             });
-            return const Placeholder();
+
+            return const SizedBox.shrink();
           },
         ),
       ),
     );
   }
 
-  Widget _handleToken(String token, BuildContext context) {
+  Widget _handleToken(User? user, BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (token.isEmpty) {
+      if (user == null) {
         context.goNamed(RouteNames.login);
       } else {
         context.goNamed(RouteNames.chat);
       }
     });
 
-    return const SizedBox();
+    return const SizedBox.shrink();
   }
 }

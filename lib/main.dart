@@ -5,9 +5,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/config/firebase/firebase_options.dart';
 
-// late final FirebaseApp app;
-// late final FirebaseAuth auth;
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
