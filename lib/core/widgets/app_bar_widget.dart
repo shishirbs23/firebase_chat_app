@@ -1,9 +1,9 @@
-import 'package:firebase_chat_app/core/config/firebase/firebase_settings.dart';
+import 'package:firebase_chat_app/core/config/firebase/FirebaseSettings.dart';
 import 'package:firebase_chat_app/core/config/routing/app_router_generator.dart';
 import 'package:firebase_chat_app/features/chat/presentation/widgets/signout_dialog_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_chat_app/utils/app_colors.dart';
-import 'package:firebase_chat_app/utils/app_strings.dart';
+import 'package:firebase_chat_app/utils/AppColors.dart';
+import 'package:firebase_chat_app/utils/AppStrings.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 

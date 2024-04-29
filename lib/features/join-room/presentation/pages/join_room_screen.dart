@@ -1,7 +1,8 @@
-import 'package:firebase_chat_app/core/config/firebase/firebase_settings.dart';
+import 'package:firebase_chat_app/core/config/firebase/FirebaseSettings.dart';
 import 'package:firebase_chat_app/core/config/routing/app_router_generator.dart';
-import 'package:firebase_chat_app/utils/app_colors.dart';
-import 'package:firebase_chat_app/utils/app_strings.dart';
+import 'package:firebase_chat_app/utils/AppColors.dart';
+import 'package:firebase_chat_app/utils/AppConstants.dart';
+import 'package:firebase_chat_app/utils/AppStrings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_chat_app/core/widgets/app_bar_widget.dart';
@@ -33,6 +34,7 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
               if (currentUserName!.isEmpty) {
                 _showUsernameDialog(context);
               } else {
+                FirebaseSettings().subscribeToChatGroup(AppConstants.chatGroupId);
                 context.goNamed(RouteNames.chat);
               }
             },
@@ -87,6 +89,7 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
                 await FirebaseSettings()
                     .updateUsername(usernameController.text);
                 Navigator.of(context).pop();
+                FirebaseSettings().subscribeToChatGroup(AppConstants.chatGroupId);
                 context.goNamed(RouteNames.chat);
               },
             ),

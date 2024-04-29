@@ -1,5 +1,5 @@
-import 'package:firebase_chat_app/core/config/firebase/firebase_settings.dart';
-import 'package:firebase_chat_app/utils/app_strings.dart';
+import 'package:firebase_chat_app/core/config/firebase/FirebaseSettings.dart';
+import 'package:firebase_chat_app/utils/AppStrings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;

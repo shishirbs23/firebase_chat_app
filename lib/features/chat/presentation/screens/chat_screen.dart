@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_chat_app/core/config/firebase/firebase_settings.dart';
+import 'package:firebase_chat_app/core/config/firebase/FirebaseSettings.dart';
+import 'package:firebase_chat_app/core/config/networking/Endpoints.dart';
 import 'package:firebase_chat_app/utils/AppConstants.dart';
-import 'package:firebase_chat_app/utils/app_strings.dart';
+import 'package:firebase_chat_app/utils/AppStrings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_chat_app/core/widgets/app_bar_widget.dart';
 import 'package:intl/intl.dart';
+
+import '../../../../core/config/networking/ApiService.dart';
 
 final messagesProvider = StreamProvider.autoDispose
     .family<QuerySnapshot, String>((ref, chatGroupId) {
@@ -32,15 +35,46 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   void initState() {
     FirebaseFirestore.instance
-        .collection('chats')
+        .collection(AppStrings.chats)
         .doc(AppConstants.chatGroupId)
-        .collection('messages')
-        .orderBy('timestamp', descending: true)
+        .collection(AppStrings.messages)
+        .orderBy(AppStrings.timestamp, descending: true)
         .snapshots()
-        .listen((snapshot) {
-      print('Received new messages: ${snapshot.docs.length}');
-      // Update your state here
-    });
+        .listen(
+      (event) async {
+        String? fcmToken = await FirebaseSettings().fcmToken;
+
+        if (fcmToken!.isNotEmpty) {
+          Map<String, dynamic> lastMessage = event.docs.first.data();
+          String lastMessageUserName = lastMessage["userName"];
+          String lastMessageText = lastMessage["text"];
+
+          print(event.docs.first.data());
+
+          if (lastMessageUserName != FirebaseSettings().currentUserName) {
+            print("mile nai, so push jabe");
+
+            final apiService = ApiService();
+
+            const path = '${ApiService.baseUrl}/${Endpoints.sendFcm}';
+            final requestBody = {
+              "notification": {
+                "title": "$lastMessageUserName sends you a message...",
+                "body": lastMessageText
+              },
+              "to": fcmToken
+            };
+
+            try {
+              final response = await apiService.post(path, requestBody);
+              print('Response: $response');
+            } catch (e) {
+              print('Error: $e');
+            }
+          }
+        }
+      },
+    );
 
     super.initState();
   }
@@ -77,7 +111,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       final timestamp =
                           messageData[AppStrings.timestamp].toDate();
                       final formattedTimestamp =
-                          DateFormat('HH:mm, MM/dd/yyyy').format(timestamp);
+                          DateFormat(AppConstants.dateFormat).format(timestamp);
 
                       return ListTile(
                         title: Text(message[AppStrings.text]),

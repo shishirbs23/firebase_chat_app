@@ -1,4 +1,4 @@
-import 'package:firebase_chat_app/utils/app_strings.dart';
+import 'package:firebase_chat_app/utils/AppStrings.dart';
 import 'package:flutter/material.dart';
 
 class SignOutDialogWidget extends StatelessWidget {
