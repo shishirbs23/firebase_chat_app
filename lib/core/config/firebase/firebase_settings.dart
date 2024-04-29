@@ -1,6 +1,11 @@
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import '../../../utils/app_colors.dart';
+import '../../../utils/app_strings.dart';
 
 enum SignInError {
   userNotFound,
@@ -21,6 +26,11 @@ class SignInResult {
 class FirebaseSettings {
   final _firebaseAuth = FirebaseAuth.instance;
   final _firebaseMessaging = FirebaseMessaging.instance;
+  final _firebaseStore = FirebaseFirestore.instance;
+
+  User? get currentUser => _firebaseAuth.currentUser;
+
+  String? get currentUserName => _firebaseAuth.currentUser!.displayName ?? "";
 
   Future<void> initNotifications() async {
     NotificationSettings settings =
@@ -61,6 +71,47 @@ class FirebaseSettings {
       }
     } catch (e) {
       return SignInResult.failure(SignInError.common);
+    }
+  }
+
+  Future<void> updateUsername(String userName) async {
+    try {
+      // Update the username in Firebase Authentication
+      await _firebaseAuth.currentUser!.updateDisplayName(userName);
+
+      // Update the username in Firestore
+      await _firebaseStore
+          .collection('users')
+          .doc(
+            _firebaseAuth.currentUser!.uid,
+          )
+          .update({
+        'username': userName,
+      });
+
+      print(userName);
+
+      // Show a success message
+      Fluttertoast.showToast(
+        msg: AppStrings.updateUserNameSuccessMessage,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: AppColors.greenAccent,
+        textColor: AppColors.white,
+        fontSize: 16.0,
+      );
+    } catch (e) {
+      // Show an error message
+      Fluttertoast.showToast(
+        msg: '${AppStrings.updateUserNameErrorMessage} $e',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: AppColors.redAccent,
+        textColor: AppColors.white,
+        fontSize: 16.0,
+      );
     }
   }
 }

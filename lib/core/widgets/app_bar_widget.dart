@@ -8,7 +8,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
-  const AppBarWidget({super.key});
+  final String headerTitle;
+
+  const AppBarWidget({super.key, required this.headerTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +22,9 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                AppStrings.chat,
-                style: TextStyle(
+              Text(
+                headerTitle,
+                style: const TextStyle(
                   fontSize: 18.0,
                   color: AppColors.white,
                 ),

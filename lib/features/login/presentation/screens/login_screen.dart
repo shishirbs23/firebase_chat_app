@@ -87,8 +87,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ref.read(loadingProvider.notifier).state
                   ? AppStrings.signingIn
                   : AppStrings.signIn,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16.0,
+                color: ref.read(loadingProvider.notifier).state
+                    ? AppColors.grey
+                    : AppColors.blue,
               ),
             ),
             if (ref.read(loadingProvider.notifier).state)
@@ -207,7 +210,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           break;
       }
     } else {
-      ref.read(loadingProvider.notifier).state = false;
       Fluttertoast.showToast(
         msg: AppStrings.successfullySignedIn,
         toastLength: Toast.LENGTH_LONG,
@@ -217,7 +219,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         textColor: AppColors.white,
         fontSize: 16.0,
       );
-      context.goNamed(RouteNames.chat);
+      context.goNamed(RouteNames.joinRoom);
+      ref.read(loadingProvider.notifier).state = false;
     }
   }
 }

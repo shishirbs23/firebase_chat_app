@@ -1,3 +1,4 @@
+import 'package:firebase_chat_app/core/config/firebase/firebase_settings.dart';
 import 'package:firebase_chat_app/utils/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,7 +41,11 @@ class SplashScreen extends ConsumerWidget {
       if (user == null) {
         context.goNamed(RouteNames.login);
       } else {
-        context.goNamed(RouteNames.chat);
+        if (FirebaseSettings().currentUserName!.isEmpty) {
+          context.goNamed(RouteNames.joinRoom);
+        } else {
+          context.goNamed(RouteNames.chat);
+        }
       }
     });
 
