@@ -122,16 +122,6 @@ class FirebaseSettings {
       // Update the username in Firebase Authentication
       await _firebaseAuth.currentUser!.updateDisplayName(userName);
 
-      // Update the username in Firestore
-      await _firebaseStore
-          .collection('users')
-          .doc(
-            _firebaseAuth.currentUser!.uid,
-          )
-          .update({
-        'username': userName,
-      });
-
       // Show a success message
       Fluttertoast.showToast(
         msg: AppStrings.updateUserNameSuccessMessage,

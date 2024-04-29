@@ -8,8 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_chat_app/core/widgets/app_bar_widget.dart';
 import 'package:intl/intl.dart';
-
-import '../../../../core/config/networking/ApiService.dart';
+import 'package:firebase_chat_app/core/config/networking/ApiService.dart';
 
 final messagesProvider = StreamProvider.autoDispose
     .family<QuerySnapshot, String>((ref, chatGroupId) {
@@ -46,14 +45,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
         if (fcmToken!.isNotEmpty) {
           Map<String, dynamic> lastMessage = event.docs.first.data();
-          String lastMessageUserName = lastMessage["userName"];
-          String lastMessageText = lastMessage["text"];
-
-          print(event.docs.first.data());
+          String lastMessageUserName = lastMessage[AppStrings.userName];
+          String lastMessageText = lastMessage[AppStrings.text];
 
           if (lastMessageUserName != FirebaseSettings().currentUserName) {
-            print("mile nai, so push jabe");
-
             final apiService = ApiService();
 
             const path = '${ApiService.baseUrl}/${Endpoints.sendFcm}';
@@ -64,13 +59,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               },
               "to": fcmToken
             };
-
-            try {
-              final response = await apiService.post(path, requestBody);
-              print('Response: $response');
-            } catch (e) {
-              print('Error: $e');
-            }
+            await apiService.post(path, requestBody);
           }
         }
       },
