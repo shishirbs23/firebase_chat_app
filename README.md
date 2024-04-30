@@ -1,16 +1,20 @@
-# firebase_chat_app
+# Firebase Chat App
 
-A new Flutter project.
+This Flutter project is a simple chat application featuring user authentication (login with email and password), user session management, room joining, real-time chat functionality, and push notifications. We used `go_router` for navigation, `flutter_riverpod` for state management, `intl` for internationalization, and `flutter_hooks` for reactive programming.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project serves as a great starting point for developing a Flutter chat application with Firebase integration.
 
-A few resources to get you started if this is your first Flutter project:
+To get started:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Clone this repository to your local machine.
+2. Ensure you have Flutter installed. If not, follow the [Flutter installation guide](https://flutter.dev/docs/get-started/install).
+3. Set up your Firebase project and add the necessary configuration files (`google-services.json` for Android or `GoogleService-Info.plist` for iOS) to the `android/app` or `ios/Runner` directory respectively.
+4. Run `flutter pub get` to install the project dependencies.
+5. Launch the app on an emulator or physical device using `flutter run`.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+For more information on Flutter development:
+
+- Check out the [Flutter documentation](https://docs.flutter.dev/) for tutorials, samples, and a full API reference.
+- Explore the [Flutter cookbook](https://docs.flutter.dev/cookbook) for useful code snippets and examples.
