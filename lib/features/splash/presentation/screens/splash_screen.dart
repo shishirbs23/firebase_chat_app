@@ -24,7 +24,7 @@ class SplashScreen extends HookWidget {
 
     return const Scaffold(
       body: Center(
-        child: SizedBox.shrink(), // Show a loading indicator
+        child: SizedBox.shrink(), // Show a Sized box to minimize content
       ),
     );
   }
