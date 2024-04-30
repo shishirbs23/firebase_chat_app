@@ -1,81 +1,132 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:firebase_chat_app/core/config/routing/app_router_generator.dart';
 import 'package:firebase_chat_app/utils/AppColors.dart';
 import 'package:firebase_chat_app/utils/AppStrings.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_chat_app/core/config/firebase/FirebaseSettings.dart';
 
-final obscureTextProvider = StateProvider<bool>((ref) => true);
-final loadingProvider = StateProvider<bool>((ref) => false);
-
-class LoginScreen extends ConsumerStatefulWidget {
+class LoginScreen extends HookWidget {
   const LoginScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
-}
+  Widget build(BuildContext context) {
+    final formKey = useMemoized(() => GlobalKey<FormState>());
+    final email = useState<String>('');
+    final password = useState<String>('');
+    final obscureText = useState<bool>(true);
+    final loading = useState<bool>(false);
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  String _email = '';
-  String _password = '';
-
-  AppBar appBar = AppBar(
-    title: const Text(
-      AppStrings.signIn,
-      style: TextStyle(
-        color: AppColors.white,
-      ),
-    ),
-    elevation: 1,
-    backgroundColor: AppColors.appBarColor,
-  );
-
-  TextFormField get emailField => TextFormField(
-        decoration: const InputDecoration(
-          labelText: AppStrings.email,
+    AppBar appBar = AppBar(
+      title: const Text(
+        AppStrings.signIn,
+        style: TextStyle(
+          color: AppColors.white,
         ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return AppStrings.pleaseEnterEmail;
-          }
-          return null;
-        },
-        onSaved: (value) => _email = value!,
-      );
+      ),
+      elevation: 1,
+      backgroundColor: AppColors.appBarColor,
+    );
 
-  TextFormField get passwordField {
-    final obscureText = ref.watch(obscureTextProvider);
+    TextFormField emailField = TextFormField(
+      decoration: const InputDecoration(
+        labelText: AppStrings.email,
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return AppStrings.pleaseEnterEmail;
+        }
+        return null;
+      },
+      onSaved: (value) => email.value = value!,
+    );
 
-    return TextFormField(
+    TextFormField passwordField = TextFormField(
       decoration: InputDecoration(
         labelText: AppStrings.password,
         suffixIcon: IconButton(
           icon: Icon(
-            obscureText ? Icons.visibility_off : Icons.visibility,
+            obscureText.value ? Icons.visibility_off : Icons.visibility,
           ),
           onPressed: () {
-            ref.read(obscureTextProvider.notifier).state = !obscureText;
+            obscureText.value = !obscureText.value;
           },
         ),
       ),
-      obscureText: obscureText,
+      obscureText: obscureText.value,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return AppStrings.pleaseEnterPassword;
         }
         return null;
       },
-      onSaved: (value) => _password = value!,
+      onSaved: (value) => password.value = value!,
     );
-  }
 
-  Widget get loginButton {
-    return ElevatedButton(
-      onPressed:
-          !ref.read(loadingProvider.notifier).state ? handleSignIn : null,
+    Future<void> handleSignIn() async {
+      if (formKey.currentState!.validate()) {
+        formKey.currentState!.save();
+      } else {
+        return;
+      }
+
+      loading.value = true;
+
+      SignInResult result = await FirebaseSettings().signInWithEmailAndPassword(
+        email.value,
+        password.value,
+      );
+
+      if (result.error != null) {
+        loading.value = false;
+
+        String msg;
+
+        switch (result.error) {
+          case SignInError.invalidEmail:
+            msg = AppStrings.invalidEmail;
+            break;
+          case SignInError.invalidCredential:
+            msg = AppStrings.invalidCredential;
+            break;
+          case SignInError.userNotFound:
+            msg = AppStrings.userNotFound;
+            break;
+          case SignInError.wrongPassword:
+            msg = AppStrings.wrongPassword;
+            break;
+          default:
+            msg = AppStrings.commonError;
+            break;
+        }
+
+        Fluttertoast.showToast(
+          msg: msg,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: AppColors.redAccent,
+          textColor: AppColors.white,
+          fontSize: 16.0,
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: AppStrings.successfullySignedIn,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: AppColors.greenAccent,
+          textColor: AppColors.white,
+          fontSize: 16.0,
+        );
+        context.goNamed(RouteNames.joinRoom);
+        loading.value = false;
+      }
+    }
+
+    ElevatedButton loginButton = ElevatedButton(
+      onPressed: loading.value ? null : handleSignIn,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0),
@@ -84,19 +135,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              ref.read(loadingProvider.notifier).state
-                  ? AppStrings.signingIn
-                  : AppStrings.signIn,
+              loading.value ? AppStrings.signingIn : AppStrings.signIn,
               style: TextStyle(
                 fontSize: 16.0,
-                color: ref.read(loadingProvider.notifier).state
-                    ? AppColors.grey
-                    : AppColors.blue,
+                color: loading.value ? AppColors.grey : AppColors.blue,
               ),
             ),
-            if (ref.read(loadingProvider.notifier).state)
-              const SizedBox(width: 12.0),
-            if (ref.read(loadingProvider.notifier).state)
+            if (loading.value) const SizedBox(width: 12.0),
+            if (loading.value)
               const SizedBox(
                 height: 22.0,
                 width: 22.0,
@@ -109,18 +155,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    ref.watch(loadingProvider);
 
     return Scaffold(
       appBar: appBar,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey,
+          key: formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -133,94 +174,5 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> handleSignIn() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-    } else {
-      return;
-    }
-
-    ref.read(loadingProvider.notifier).state = true;
-
-    SignInResult result = await FirebaseSettings().signInWithEmailAndPassword(
-      _email,
-      _password,
-    );
-
-    if (result.error != null) {
-      ref.read(loadingProvider.notifier).state = false;
-
-      switch (result.error) {
-        case SignInError.invalidEmail:
-          Fluttertoast.showToast(
-            msg: AppStrings.invalidEmail,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: AppColors.redAccent,
-            textColor: AppColors.white,
-            fontSize: 16.0,
-          );
-          break;
-        case SignInError.invalidCredential:
-          Fluttertoast.showToast(
-            msg: AppStrings.invalidCredential,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: AppColors.redAccent,
-            textColor: AppColors.white,
-            fontSize: 16.0,
-          );
-          break;
-        case SignInError.userNotFound:
-          Fluttertoast.showToast(
-            msg: AppStrings.userNotFound,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: AppColors.redAccent,
-            textColor: AppColors.white,
-            fontSize: 16.0,
-          );
-          break;
-        case SignInError.wrongPassword:
-          Fluttertoast.showToast(
-            msg: AppStrings.wrongPassword,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: AppColors.redAccent,
-            textColor: AppColors.white,
-            fontSize: 16.0,
-          );
-          break;
-        default:
-          Fluttertoast.showToast(
-            msg: AppStrings.commonError,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: AppColors.redAccent,
-            textColor: AppColors.white,
-            fontSize: 16.0,
-          );
-          break;
-      }
-    } else {
-      Fluttertoast.showToast(
-        msg: AppStrings.successfullySignedIn,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: AppColors.greenAccent,
-        textColor: AppColors.white,
-        fontSize: 16.0,
-      );
-      context.goNamed(RouteNames.joinRoom);
-      ref.read(loadingProvider.notifier).state = false;
-    }
   }
 }
