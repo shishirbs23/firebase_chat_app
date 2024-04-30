@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:firebase_chat_app/utils/AppColors.dart';
-import 'package:firebase_chat_app/utils/AppStrings.dart';
+import 'package:firebase_chat_app/utils/app_colors.dart';
+import 'package:firebase_chat_app/utils/app_strings.dart';
 
 enum SignInError {
   userNotFound,

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:firebase_chat_app/utils/AppConstants.dart';
+import 'package:firebase_chat_app/utils/app_constants.dart';
 
 class ApiService {
   static const String baseUrl = 'https://fcm.googleapis.com';
@@ -26,7 +26,6 @@ class ApiService {
         throw Exception('Failed to load data: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error: $e');
       throw Exception('Failed to load data');
     }
   }

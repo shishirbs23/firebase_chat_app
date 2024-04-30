@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_chat_app/core/config/firebase/FirebaseSettings.dart';
-import 'package:firebase_chat_app/core/config/networking/Endpoints.dart';
-import 'package:firebase_chat_app/utils/AppConstants.dart';
-import 'package:firebase_chat_app/utils/AppStrings.dart';
+import 'package:firebase_chat_app/core/config/firebase/firebase_settings.dart';
+import 'package:firebase_chat_app/core/config/networking/endpoints.dart';
+import 'package:firebase_chat_app/utils/app_constants.dart';
+import 'package:firebase_chat_app/utils/app_strings.dart';
 import 'package:firebase_chat_app/core/widgets/app_bar_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:firebase_chat_app/core/config/networking/ApiService.dart';
+import 'package:firebase_chat_app/core/config/networking/api_service.dart';
 
 final messagesProvider = StreamProvider.autoDispose
     .family<QuerySnapshot, String>((ref, chatGroupId) {

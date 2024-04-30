@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:firebase_chat_app/utils/AppStrings.dart';
+import 'package:firebase_chat_app/utils/app_strings.dart';
 
 class SignOutDialogWidget extends HookWidget {
   final Function onConfirm;

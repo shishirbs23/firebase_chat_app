@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:go_router/go_router.dart';
-import 'package:firebase_chat_app/core/config/firebase/FirebaseSettings.dart';
+import 'package:firebase_chat_app/core/config/firebase/firebase_settings.dart';
 import 'package:firebase_chat_app/core/config/routing/app_router_generator.dart';
 
 class SplashScreen extends HookWidget {

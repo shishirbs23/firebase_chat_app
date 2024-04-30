@@ -1,4 +1,4 @@
-import 'package:firebase_chat_app/core/config/firebase/FirebaseSettings.dart';
+import 'package:firebase_chat_app/core/config/firebase/firebase_settings.dart';
 import 'package:firebase_chat_app/core/config/routing/app_router_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
