@@ -1,6 +1,6 @@
 # Firebase Chat App
 
-This Flutter project is a simple chat application featuring user authentication (login with email and password), user session management, room joining, real-time chat functionality, and push notifications. We used `go_router` for navigation, `flutter_riverpod` for state management, `intl` for internationalization, and `flutter_hooks` for reactive programming.
+This Flutter project is a simple chat application featuring user authentication (login with email and password), user session management, room joining, real-time chat functionality, and push notifications. We used `go_router` for navigation, `flutter_riverpod` for state management, and `flutter_hooks` for reactive programming.
 
 ## Getting Started
 
