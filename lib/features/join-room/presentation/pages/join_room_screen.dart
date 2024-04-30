@@ -1,56 +1,50 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:firebase_chat_app/core/config/firebase/FirebaseSettings.dart';
 import 'package:firebase_chat_app/core/config/routing/app_router_generator.dart';
 import 'package:firebase_chat_app/utils/AppColors.dart';
 import 'package:firebase_chat_app/utils/AppConstants.dart';
 import 'package:firebase_chat_app/utils/AppStrings.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_chat_app/core/widgets/app_bar_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_chat_app/core/widgets/app_bar_widget.dart';
 
-class JoinRoomScreen extends ConsumerStatefulWidget {
+class JoinRoomScreen extends HookWidget {
   const JoinRoomScreen({super.key});
 
   @override
-  ConsumerState<JoinRoomScreen> createState() => _JoinRoomScreenState();
-}
-
-class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
-  @override
   Widget build(BuildContext context) {
+    final usernameController = useTextEditingController();
+
     return Scaffold(
       appBar: const AppBarWidget(
         headerTitle: AppStrings.joinRoom,
       ),
       body: Center(
         child: ElevatedButton(
-            onPressed: () {
-              String? currentUserName = FirebaseSettings().currentUserName;
+          onPressed: () async {
+            String? currentUserName = FirebaseSettings().currentUserName;
 
-              print('current user name');
-              print(currentUserName);
-
-              if (currentUserName!.isEmpty) {
-                _showUsernameDialog(context);
-              } else {
-                FirebaseSettings().subscribeToChatGroup(AppConstants.chatGroupId);
-                context.goNamed(RouteNames.chat);
-              }
-            },
-            child: const Text(
-              AppStrings.joinChatRoom,
-              style: TextStyle(
-                color: AppColors.blue,
-              ),
-            )),
+            if (currentUserName!.isEmpty) {
+              await _showUsernameDialog(context, usernameController);
+            } else {
+              FirebaseSettings().subscribeToChatGroup(AppConstants.chatGroupId);
+              context.goNamed(RouteNames.chat);
+            }
+          },
+          child: const Text(
+            AppStrings.joinChatRoom,
+            style: TextStyle(
+              color: AppColors.blue,
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Future<void> _showUsernameDialog(BuildContext context) async {
-    final TextEditingController usernameController = TextEditingController();
-
+  Future<void> _showUsernameDialog(
+      BuildContext context, TextEditingController usernameController) async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -89,7 +83,8 @@ class _JoinRoomScreenState extends ConsumerState<JoinRoomScreen> {
                 await FirebaseSettings()
                     .updateUsername(usernameController.text);
                 Navigator.of(context).pop();
-                FirebaseSettings().subscribeToChatGroup(AppConstants.chatGroupId);
+                FirebaseSettings()
+                    .subscribeToChatGroup(AppConstants.chatGroupId);
                 context.goNamed(RouteNames.chat);
               },
             ),
