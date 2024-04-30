@@ -1,7 +1,8 @@
-import 'package:firebase_chat_app/utils/AppStrings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:firebase_chat_app/utils/AppStrings.dart';
 
-class SignOutDialogWidget extends StatelessWidget {
+class SignOutDialogWidget extends HookWidget {
   final Function onConfirm;
 
   const SignOutDialogWidget({
