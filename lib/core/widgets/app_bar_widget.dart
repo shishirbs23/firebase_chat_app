@@ -1,13 +1,14 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:firebase_chat_app/core/config/firebase/FirebaseSettings.dart';
 import 'package:firebase_chat_app/core/config/routing/app_router_generator.dart';
 import 'package:firebase_chat_app/features/chat/presentation/widgets/signout_dialog_widget.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_chat_app/utils/AppColors.dart';
 import 'package:firebase_chat_app/utils/AppStrings.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 
-class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
+class AppBarWidget extends HookWidget implements PreferredSizeWidget {
   final String headerTitle;
 
   const AppBarWidget({super.key, required this.headerTitle});
