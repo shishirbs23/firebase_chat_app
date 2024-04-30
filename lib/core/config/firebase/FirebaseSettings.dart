@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -26,7 +25,6 @@ class SignInResult {
 class FirebaseSettings {
   final _firebaseAuth = FirebaseAuth.instance;
   final _firebaseMessaging = FirebaseMessaging.instance;
-  final _firebaseStore = FirebaseFirestore.instance;
 
   User? get currentUser => _firebaseAuth.currentUser;
 
@@ -81,9 +79,6 @@ class FirebaseSettings {
   }
 
   Future<void> handleBackgroundMessage(RemoteMessage message) async {
-    print('Title: ${message.notification?.title}');
-    print('Body: ${message.notification?.body}');
-    print('Payload: ${message.data}');
   }
 
   Future<void> signOut() async {
