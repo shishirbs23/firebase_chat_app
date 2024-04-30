@@ -1,12 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_chat_app/core/config/firebase/FirebaseSettings.dart';
 import 'package:firebase_chat_app/core/config/networking/Endpoints.dart';
 import 'package:firebase_chat_app/utils/AppConstants.dart';
 import 'package:firebase_chat_app/utils/AppStrings.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_chat_app/core/widgets/app_bar_widget.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_chat_app/core/config/networking/ApiService.dart';
 
@@ -20,27 +20,22 @@ final messagesProvider = StreamProvider.autoDispose
       .snapshots();
 });
 
-class ChatScreen extends ConsumerStatefulWidget {
+class ChatScreen extends HookConsumerWidget {
   const ChatScreen({super.key});
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final controller = useTextEditingController();
+    final currentUser = FirebaseSettings().currentUser;
 
-class _ChatScreenState extends ConsumerState<ChatScreen> {
-  final TextEditingController _controller = TextEditingController();
-  final User? currentUser = FirebaseSettings().currentUser;
-
-  @override
-  void initState() {
-    FirebaseFirestore.instance
-        .collection(AppStrings.chats)
-        .doc(AppConstants.chatGroupId)
-        .collection(AppStrings.messages)
-        .orderBy(AppStrings.timestamp, descending: true)
-        .snapshots()
-        .listen(
-      (event) async {
+    useEffect(() {
+      final subscription = FirebaseFirestore.instance
+          .collection(AppStrings.chats)
+          .doc(AppConstants.chatGroupId)
+          .collection(AppStrings.messages)
+          .orderBy(AppStrings.timestamp, descending: true)
+          .snapshots()
+          .listen((event) async {
         String? fcmToken = await FirebaseSettings().fcmToken;
 
         if (fcmToken!.isNotEmpty) {
@@ -62,14 +57,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             await apiService.post(path, requestBody);
           }
         }
-      },
-    );
+      });
 
-    super.initState();
-  }
+      return subscription.cancel;
+    }, const []);
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(
         headerTitle:
@@ -129,7 +121,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _controller,
+                    controller: controller,
                     minLines: 1,
                     maxLines: 5,
                     decoration: const InputDecoration(
@@ -140,7 +132,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: () {
-                    if (_controller.text.isNotEmpty) {
+                    if (controller.text.isNotEmpty) {
                       FirebaseFirestore.instance
                           .collection(AppStrings.chats)
                           .doc(AppConstants.chatGroupId)
@@ -148,11 +140,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           .add({
                         AppStrings.id: currentUser?.uid,
                         AppStrings.userName: currentUser?.displayName,
-                        AppStrings.text: _controller.text,
+                        AppStrings.text: controller.text,
                         AppStrings.timestamp: DateTime.now(),
                       });
 
-                      _controller.clear();
+                      controller.clear();
                     }
                   },
                 ),
