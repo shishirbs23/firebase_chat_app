@@ -18,7 +18,7 @@ This project serves as a great starting point for developing a Flutter chat appl
 To get started:
 
 1. Clone this repository to your local machine.
-2. Ensure you have Flutter installed. If not, follow the [Flutter installation guide](https://flutter.dev/docs/get-started/install).
+2. Ensure you have Flutter installed. If not, follow the [Flutter installation guide](https://flutter.dev/docs/get-started/install). We used **Flutter version 3.19.6** in this project.
 3. Set up your Firebase project and add the necessary configuration files (`google-services.json` for Android or `GoogleService-Info.plist` for iOS) to the `android/app` or `ios/Runner` directory respectively.
 4. Install the required Flutter packages by running `flutter pub get`.
 5. Launch the app on an emulator or physical device using `flutter run`.
