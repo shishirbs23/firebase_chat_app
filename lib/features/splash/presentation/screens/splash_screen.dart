@@ -34,9 +34,9 @@ class SplashScreen extends HookWidget {
         context.goNamed(RouteNames.login);
       } else {
         if (FirebaseSettings().currentUserName!.isEmpty) {
-          context.goNamed(RouteNames.joinRoom);
+          context.goNamed(RouteNames.startChat);
         } else {
-          context.goNamed(RouteNames.chat);
+          context.goNamed(RouteNames.inbox);
         }
       }
     });

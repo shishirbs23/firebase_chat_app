@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:firebase_chat_app/core/config/firebase/firebase_settings.dart';
 import 'package:firebase_chat_app/core/config/routing/app_router_generator.dart';
-import 'package:firebase_chat_app/features/chat/presentation/widgets/signout_dialog_widget.dart';
+import 'package:firebase_chat_app/core/widgets/signout_dialog_widget.dart';
 import 'package:firebase_chat_app/utils/app_colors.dart';
 import 'package:firebase_chat_app/utils/app_strings.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -10,8 +10,9 @@ import 'package:go_router/go_router.dart';
 
 class AppBarWidget extends HookWidget implements PreferredSizeWidget {
   final String headerTitle;
+  final currentUser = FirebaseSettings().currentUser;
 
-  const AppBarWidget({super.key, required this.headerTitle});
+  AppBarWidget({super.key, required this.headerTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +56,8 @@ class AppBarWidget extends HookWidget implements PreferredSizeWidget {
       builder: (BuildContext context) {
         return SignOutDialogWidget(
           onConfirm: () async {
+            String userId = FirebaseSettings().currentUser!.uid;
             await FirebaseSettings().signOut();
-            context.goNamed(RouteNames.login);
             Fluttertoast.showToast(
               msg: AppStrings.successfullySignedOut,
               toastLength: Toast.LENGTH_LONG,
@@ -66,6 +67,8 @@ class AppBarWidget extends HookWidget implements PreferredSizeWidget {
               textColor: AppColors.white,
               fontSize: 16.0,
             );
+            context.goNamed(RouteNames.login);
+            await FirebaseSettings().deleteUserDocument(userId);
           },
         );
       },

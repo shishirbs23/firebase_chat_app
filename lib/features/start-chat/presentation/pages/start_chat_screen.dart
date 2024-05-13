@@ -9,16 +9,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_chat_app/core/widgets/app_bar_widget.dart';
 
-class JoinRoomScreen extends HookWidget {
-  const JoinRoomScreen({super.key});
+class StartChatScreen extends HookWidget {
+  const StartChatScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final usernameController = useTextEditingController();
 
     return Scaffold(
-      appBar: const AppBarWidget(
-        headerTitle: AppStrings.joinRoom,
+      appBar: AppBarWidget(
+        headerTitle: AppStrings.startChat,
       ),
       body: Center(
         child: ElevatedButton(
@@ -28,12 +28,15 @@ class JoinRoomScreen extends HookWidget {
             if (currentUserName!.isEmpty) {
               await _showUsernameDialog(context, usernameController);
             } else {
+              await FirebaseSettings().updateUsernameInFireStore(
+                  FirebaseSettings().currentUser?.uid ?? "",
+                  FirebaseSettings().currentUserName ?? "");
               FirebaseSettings().subscribeToChatGroup(AppConstants.chatGroupId);
-              context.goNamed(RouteNames.chat);
+              context.goNamed(RouteNames.inbox);
             }
           },
           child: const Text(
-            AppStrings.joinChatRoom,
+            AppStrings.startChatting,
             style: TextStyle(
               color: AppColors.blue,
             ),
@@ -64,7 +67,7 @@ class JoinRoomScreen extends HookWidget {
               },
             ),
             TextButton(
-              child: const Text(AppStrings.join),
+              child: const Text(AppStrings.start),
               onPressed: () async {
                 if (usernameController.text.isEmpty) {
                   Fluttertoast.showToast(
@@ -82,10 +85,13 @@ class JoinRoomScreen extends HookWidget {
 
                 await FirebaseSettings()
                     .updateUsername(usernameController.text);
+                await FirebaseSettings().updateUsernameInFireStore(
+                    FirebaseSettings().currentUser?.email ?? "",
+                    usernameController.text);
                 Navigator.of(context).pop();
                 FirebaseSettings()
                     .subscribeToChatGroup(AppConstants.chatGroupId);
-                context.goNamed(RouteNames.chat);
+                context.goNamed(RouteNames.inbox);
               },
             ),
           ],
